@@ -1,0 +1,291 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #f4f6f9;
+    padding: 30px;
+    position: relative;
+}
+
+/* Achtergrondlogo */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("../images/navy%20academy.png");
+    background-repeat: no-repeat;
+    background-position: center 40px;
+    background-size: 1400px;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Titel */
+.topbar {
+    max-width: 1400px;
+    margin: 0 auto 30px auto;
+    text-align: center;
+    padding-top: 10px;
+}
+
+h1 {
+    color: #2563eb;
+    font-size: 4rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+p {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+/* Zoekbalk */
+#searchInput {
+    width: 100%;
+    max-width: 700px;
+    display: block;
+    margin: 0 auto 40px auto;
+    padding: 15px 20px;
+    font-size: 18px;
+    border: 1px solid #d0d0d0;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.25s ease;
+}
+
+#searchInput:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
+}
+
+/* Aantal resultaten */
+#resultCount {
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #2563eb;
+    background: white;
+    max-width: 250px;
+    margin: 0 auto 15px auto;
+    padding: 8px 12px;
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* Categoriemenu */
+.category-panel {
+    max-width: 350px;
+    margin: 20px auto 40px auto;
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.10);
+}
+
+.category-header {
+    background: #2563eb;
+    color: white;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.category-header:hover {
+    background: #1d4ed8;
+}
+
+.category-menu {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.cat-btn {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: transparent;
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #1e3a8a;
+    transition: .2s;
+}
+
+.cat-btn::before {
+    content: "▸ ";
+    color: #2563eb;
+}
+
+.cat-btn:hover {
+    background: #eef4ff;
+}
+
+.cat-btn.active {
+    background: #2563eb;
+    color: white;
+    font-weight: 700;
+}
+
+.cat-btn.active::before {
+    color: white;
+}
+
+/* Videogrid */
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 220px));
+    justify-content: center;
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.video-card {
+    width: 220px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.video-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.18);
+}
+
+.video-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.video-card img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    display: block;
+    background: #e5e7eb;
+}
+
+.video-card h3 {
+    padding: 12px;
+    min-height: 65px;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Thumbnail als knop */
+.video-link {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: inherit;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+/* Video afspelen op de pagina zelf */
+.video-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.video-modal.open {
+    display: flex;
+}
+
+.video-modal-inner {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+}
+
+.video-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+}
+
+.video-frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.video-close {
+    position: absolute;
+    top: -48px;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 999px;
+    background: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.video-extern {
+    display: block;
+    margin-top: 12px;
+    text-align: center;
+    color: white;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+/* Mobiel */
+@media (max-width: 768px) {
+
+    body {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .video-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .video-card {
+        width: 100%;
+        max-width: 320px;
+    }
+}

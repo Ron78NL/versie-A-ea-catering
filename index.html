@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EA Catering – Instructievideo's</title>
+
+    <!-- Startscherm / app-gedrag op telefoon -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="EA Catering">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+
+<header class="topbar">
+    <h1>EA CATERING</h1>
+    <p>Instructievideo's keukentechnieken</p>
+</header>
+
+<input id="searchInput" type="text" placeholder="🔍 Zoek een video..." autocomplete="off">
+
+<p id="resultCount"></p>
+
+<details class="category-panel" id="categoryPanel">
+    <summary class="category-header" id="categoryHeader">📚 KEUKENTECHNIEKEN</summary>
+    <div class="category-menu" id="categoryMenu"></div>
+</details>
+
+<div id="videoGrid" class="video-grid"></div>
+
+<div id="videoModal" class="video-modal">
+    <div class="video-modal-inner">
+        <button type="button" class="video-close" id="videoClose" aria-label="Sluiten">✕</button>
+        <div class="video-frame" id="videoFrame"></div>
+        <a id="videoExtern" class="video-extern" target="_blank" rel="noopener noreferrer">Bekijk op YouTube</a>
+    </div>
+</div>
+
+<script>
+/*
+  Nieuwe video toevoegen? Voeg hier één regel toe:
+  { title: "Instructie ...", id: "YOUTUBE_ID", category: "Categorienaam" }
+*/
+const videos = [
+    { title: "Instructie Reduceren van Bouillon", id: "AZdPYo1RWfQ", category: "Bouillons" },
+    { title: "Instructie Degraisseren van Bouillon", id: "ABYB6CxNeVo", category: "Bouillons" },
+    { title: "Instructie Arrosseren", id: "KfdiOrQkN4U", category: "Bereidingstechnieken" },
+    { title: "Instructie Aanbraden", id: "KD_NEiQ8Lj4", category: "Vlees & Vis" },
+    { title: "Instructie Vacumeren", id: "KcJeU7aODPY", category: "Bereidingstechnieken" },
+    { title: "Instructie Ontzuren van Tomatenpuree", id: "7oi2S1cfILE", category: "Bereidingstechnieken" },
+    { title: "Instructie Myoteren van Kerrie", id: "U69i22cV-Ns", category: "Bereidingstechnieken" },
+    { title: "Instructie Karamelliseren", id: "aLfP0g9VvQA", category: "Bereidingstechnieken" },
+    { title: "Instructie Fruiten en aanzweten magere mirepoix", id: "VrBw-bB9ZK0", category: "Bereidingstechnieken" },
+    { title: "Instructie En Papillote", id: "VISP2VEdlMs", category: "Bereidingstechnieken" },
+    { title: "Instructie Barderen, Larderen en Pikeren", id: "TFc8r3EYGGo", category: "Vlees & Vis" },
+    { title: "Instructie Klaren van Boter", id: "dckCb_fxdGY", category: "Bereidingstechnieken" },
+    { title: "Instructie Smelten van Boter", id: "M3ThiVgcfj4", category: "Bereidingstechnieken" },
+    { title: "Instructie gebruik Robotcoupe", id: "3Z9BISrZ3uA", category: "Keukenapparatuur" },
+    { title: "Instructiefilm Snijden van Kaas met de snijmachine", id: "YlsdetvnrUY", category: "Keukenapparatuur" },
+    { title: "Instructie Ontpitten van Mango, Perzik en Kersen", id: "oR1iPJgytbM", category: "Groenten & Fruit" },
+    { title: "Instructie Bloemen van Schnitzels", id: "rFt79XOHlPQ", category: "Vlees & Vis" },
+    { title: "Instructie marineren van Varkenshaas", id: "fxvBGpmQMt4", category: "Vlees & Vis" },
+    { title: "Instructie Doorwrijven vruchtencoulis", id: "fEN31QGGx5M", category: "Sauzen" },
+    { title: "Instructie mengen Sla en Dressing", id: "ugkUzNX4qkM", category: "Mise en Place" },
+    { title: "Instructie spatelen van chocomousse", id: "Jw1CXHBeEKQ", category: "Bakkerij & Patisserie" },
+    { title: "Instructie Zeven van bloem", id: "oZN70meOUyg", category: "Bakkerij & Patisserie" },
+    { title: "Instructie Schillen van Asperges", id: "NJrNRkHI2tw", category: "Groenten & Fruit" },
+    { title: "Instructie uitsteken van deeg", id: "fD_Gpiukchw", category: "Bakkerij & Patisserie" },
+    { title: "Instructie uitsnijden van sinaasappel", id: "m0cK_Pge9wk", category: "Groenten & Fruit" },
+    { title: "Instructie uitboren van appel", id: "Rk_B5yyO0Mw", category: "Groenten & Fruit" },
+    { title: "Instructie Canneleren van citroen", id: "Axz_LhRS3pk", category: "Groenten & Fruit" },
+    { title: "Instructie Raspen", id: "Rv_Yq7ka_lU", category: "Snijtechnieken" },
+    { title: "Instructie Hakken van Peterselie", id: "BoRaJGuFCWY", category: "Snijtechnieken" },
+    { title: "Instructie Snipperen van Ui", id: "jMmrwCJZpAY", category: "Snijtechnieken" },
+    { title: "Instructiefilm Wassen van sla", id: "t1qnTkSJ8Uk", category: "Mise en Place" },
+    { title: "Instructiefilm Bouillon maken", id: "xmc2JEyu6LM", category: "Bouillons" },
+    { title: "Instructie Monderen", id: "AZHcylydIks", category: "Bereidingstechnieken" },
+    { title: "Instructie Chinoise", id: "q9zlcYsxeuU", category: "Bouillons" },
+    { title: "Instructie Basis snijtechnieken", id: "JQjxhGzwTrA", category: "Snijtechnieken" },
+    { title: "Instructie Afwegen van ingrediënten", id: "-ylpJWBs77M", category: "Mise en Place" },
+    { title: "Instructie Afmeten vloeistoffen", id: "WBYYse9ZKNI", category: "Mise en Place" },
+    { title: "Instructie Aardappelboor", id: "Qgf6An9WMvo", category: "Keukenapparatuur" },
+    { title: "Instructie Tourneren van Aardappelen", id: "lUBiJRLJy_Q", category: "Bereidingstechnieken" },
+    { title: "Instructie Spuiten met spuitzak", id: "U1l0h9y-Gsc", category: "Bakkerij & Patisserie" },
+    { title: "Instructie Brunoise snijden", id: "pC1JnpVI1so", category: "Snijtechnieken" },
+    { title: "Instructie Schaven", id: "ulr4q5Shu4s", category: "Snijtechnieken" },
+    { title: "Instructie Pureren", id: "-RRZmj3fFmA", category: "Bereidingstechnieken" },
+    { title: "Instructie Julienne snijden", id: "xDr0W8D6jh0", category: "Snijtechnieken" },
+    { title: "Instructie Dressing maken", id: "95pwbgIikZk", category: "Sauzen" },
+    { title: "Instructie Ciseleren", id: "OTUE7Q4Mdxo", category: "Snijtechnieken" },
+    { title: "Instructie Afschuimen", id: "qwHLqZHukIo", category: "Bouillons" },
+    { title: "Instructie Afblussen", id: "hi6CqhmMddQ", category: "Sauzen" },
+    { title: "Instructie Deglaceren", id: "OrcQfrNCZ4Q", category: "Sauzen" },
+    { title: "Instructie Monteren", id: "C9kixHqbfCQ", category: "Sauzen" },
+    { title: "Instructie Liëren van soep", id: "5xnvjpNWbAI", category: "Sauzen" },
+    { title: "Instructie opkloppen van slagroom", id: "0QoFjfehnes", category: "Bakkerij & Patisserie" },
+    { title: "Instructie Passeren van Bouillon", id: "gKrq70jGDEQ", category: "Bouillons" },
+    { title: "Instructie Plukken van Makreel", id: "xvUjkwQDof8", category: "Vlees & Vis" }
+];
+
+// Volgorde van het menu
+const categorieen = [
+    "Bouillons",
+    "Snijtechnieken",
+    "Groenten & Fruit",
+    "Vlees & Vis",
+    "Sauzen",
+    "Bereidingstechnieken",
+    "Keukenapparatuur",
+    "Bakkerij & Patisserie",
+    "Mise en Place"
+];
+
+const standaardTitel = "📚 KEUKENTECHNIEKEN";
+let geselecteerdeCategorie = "";
+
+const videoGrid = document.getElementById("videoGrid");
+const searchInput = document.getElementById("searchInput");
+const resultCount = document.getElementById("resultCount");
+const categoryPanel = document.getElementById("categoryPanel");
+const categoryHeader = document.getElementById("categoryHeader");
+const categoryMenu = document.getElementById("categoryMenu");
+
+function bouwMenu() {
+    const items = [{ naam: "Alle video's", waarde: "" }]
+        .concat(categorieen.map(c => ({ naam: c, waarde: c })));
+
+    items.forEach(item => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "cat-btn" + (item.waarde === "" ? " active" : "");
+        button.textContent = item.naam;
+        button.dataset.category = item.waarde;
+
+        button.addEventListener("click", () => {
+            geselecteerdeCategorie = item.waarde;
+            categoryHeader.textContent = item.waarde === ""
+                ? standaardTitel
+                : "📚 " + item.waarde.toUpperCase();
+
+            updateMenu();
+            filterVideos();
+        });
+
+        categoryMenu.appendChild(button);
+    });
+}
+
+// Is er een categorie gekozen, dan verdwijnen alle andere categorieën.
+// Alleen de gekozen categorie en een terugknop blijven zichtbaar.
+function updateMenu() {
+    categoryMenu.querySelectorAll(".cat-btn").forEach(b => {
+        const isAlle = b.dataset.category === "";
+        const isGekozen = b.dataset.category === geselecteerdeCategorie;
+
+        b.classList.toggle("active", isGekozen);
+
+        if (geselecteerdeCategorie === "") {
+            b.hidden = false;
+            b.textContent = isAlle ? "Alle video's" : b.dataset.category;
+        } else {
+            b.hidden = !(isGekozen || isAlle);
+            if (isAlle) b.textContent = "← Alle categorieën";
+        }
+    });
+}
+
+function toonVideos(lijst) {
+    videoGrid.innerHTML = "";
+
+    lijst.forEach(video => {
+        const card = document.createElement("div");
+        card.className = "video-card";
+
+        const link = document.createElement("button");
+        link.type = "button";
+        link.className = "video-link";
+        link.setAttribute("aria-label", video.title + " afspelen");
+        link.addEventListener("click", () => openVideo(video));
+
+        const image = document.createElement("img");
+        image.src = `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
+        image.alt = video.title;
+        image.loading = "lazy";
+        image.onerror = function () {
+            this.onerror = null;
+            this.src = `https://img.youtube.com/vi/${video.id}/default.jpg`;
+        };
+
+        const title = document.createElement("h3");
+        title.textContent = video.title;
+
+        link.appendChild(image);
+        link.appendChild(title);
+        card.appendChild(link);
+        videoGrid.appendChild(card);
+    });
+}
+
+function filterVideos() {
+    const zoekterm = searchInput.value.toLowerCase().trim();
+
+    const gefilterd = videos.filter(video => {
+        const titelMatch = video.title.toLowerCase().includes(zoekterm);
+        const categorieMatch =
+            geselecteerdeCategorie === "" ||
+            video.category === geselecteerdeCategorie;
+        return titelMatch && categorieMatch;
+    });
+
+    toonVideos(gefilterd);
+    resultCount.textContent = `${gefilterd.length} video's gevonden`;
+}
+
+bouwMenu();
+filterVideos();
+searchInput.addEventListener("input", filterVideos);
+
+// Video afspelen op de pagina zelf
+const videoModal = document.getElementById("videoModal");
+const videoFrame = document.getElementById("videoFrame");
+const videoExtern = document.getElementById("videoExtern");
+const videoClose = document.getElementById("videoClose");
+
+function openVideo(video) {
+    videoFrame.innerHTML = "";
+
+    const iframe = document.createElement("iframe");
+    iframe.src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+    iframe.title = video.title;
+    iframe.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+    iframe.allowFullscreen = true;
+    videoFrame.appendChild(iframe);
+
+    videoExtern.href = `https://www.youtube.com/watch?v=${video.id}`;
+    videoModal.classList.add("open");
+    document.body.style.overflow = "hidden";
+}
+
+function closeVideo() {
+    videoModal.classList.remove("open");
+    videoFrame.innerHTML = ""; // stopt het afspelen
+    document.body.style.overflow = "";
+}
+
+videoClose.addEventListener("click", closeVideo);
+videoModal.addEventListener("click", e => {
+    if (e.target === videoModal) closeVideo();
+});
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeVideo();
+});
+
+// Maakt installeren op het startscherm en snel openen mogelijk
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").catch(() => {});
+    });
+}
+</script>
+
+</body>
+</html>
