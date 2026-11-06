@@ -3,7 +3,8 @@
 // Bij elke start wordt op de achtergrond de nieuwste versie opgehaald.
 // Verander VERSIE als je de cache wilt vernieuwen.
 
-const VERSIE = "ea-catering-v2";
+const PREFIX = "eac-a-";  // eigen voorvoegsel: alle GitHub-apps delen één opslag
+const VERSIE = PREFIX + "3";
 
 const BASIS = [
     "./",
@@ -27,7 +28,7 @@ self.addEventListener("activate", event => {
         caches.keys().then(namen =>
             Promise.all(
                 namen
-                    .filter(naam => naam !== VERSIE)
+                    .filter(naam => naam.startsWith(PREFIX) && naam !== VERSIE)
                     .map(naam => caches.delete(naam))
             )
         )
